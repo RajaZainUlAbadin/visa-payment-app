@@ -171,45 +171,48 @@ const Invoice = () => {
 
         {/* Merchant and Payment Details */}
         <Grid container spacing={4} sx={{ mb: 5 }}>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ 
-              bgcolor: 'grey.50',
-              p: 3,
-              borderRadius: 2,
-              height: '100%'
-            }}>
-              <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-                From
-              </Typography>
-              <Typography variant="body1" sx={{ fontSize: '1.1rem', mb: 1 }}>
-                {invoice.merchantName}
-              </Typography>
-              <Typography color="text.secondary">
-                Merchant ID: {invoice.merchantId}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ 
-              bgcolor: 'grey.50',
-              p: 3,
-              borderRadius: 2,
-              height: '100%',
-              textAlign: 'right'
-            }}>
-              <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-                Payment Details
-              </Typography>
-              <Typography variant="body1" sx={{ fontSize: '1.1rem', mb: 1 }}>
-                Date: {format(new Date(invoice.date), 'PPP')}
-              </Typography>
-              <Typography color="text.secondary">
-                Transaction ID: {invoice.transactionId}
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
+            {/* Merchant Details - Left Side */}
+            <Grid item xs={6} md={6}  sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <Box sx={{ 
+                bgcolor: 'grey.50',
+                p: 3,
+                borderRadius: 2,
+                height: '100%'
+                }}>
+                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+                    From
+                </Typography>
+                <Typography variant="body1" sx={{ fontSize: '1.1rem', mb: 1 }}>
+                    {invoice.merchantName}
+                </Typography>
+                <Typography color="text.secondary">
+                    Merchant ID: {invoice.merchantId}
+                </Typography>
+                </Box>
+            </Grid>
 
+            {/* Payment Details - Right Side */}
+            <Grid item xs={6} md={6} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Box sx={{ 
+                bgcolor: 'grey.50',
+                p: 3,
+                borderRadius: 2,
+                width: '100%'
+                }}>
+                <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+                    Payment Details
+                    </Typography>
+                    <Typography variant="body1" sx={{ fontSize: '1.1rem', mb: 1 }}>
+                    Date: {format(new Date(invoice.date), 'PPP')}
+                    </Typography>
+                    <Typography color="text.secondary">
+                    Transaction ID: {invoice.transactionId}
+                    </Typography>
+                </Box>
+                </Box>
+            </Grid>
+            </Grid>
         {/* Payment Summary */}
         <TableContainer 
           sx={{ 
@@ -268,10 +271,10 @@ const Invoice = () => {
             width: 12, 
             height: 12, 
             borderRadius: '50%',
-            bgcolor: invoice.status === 'COMPLETED' ? 'success.main' : 'warning.main',
+            bgcolor: invoice.status === 'COMPLETED' ? 'white' : 'warning.main',
             animation: 'pulse 2s infinite'
           }} />
-          <Typography variant="h6" sx={{ color: invoice.status === 'COMPLETED' ? 'success.dark' : 'warning.dark' }}>
+          <Typography variant="h6" sx={{ color: invoice.status === 'COMPLETED' ? 'white' : 'warning.dark' }}>
             Payment Status: {invoice.status}
           </Typography>
         </Box>
