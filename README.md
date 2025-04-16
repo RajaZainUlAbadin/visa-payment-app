@@ -1,4 +1,4 @@
-#Push Pay Platform
+# Push Pay Platform
 
 Just do ``npm install`` first to both /client and /server directory.
 
