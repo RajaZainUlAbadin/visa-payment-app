@@ -24,6 +24,7 @@ import {
   Download as DownloadIcon 
 } from '@mui/icons-material';
 import axios from 'axios';
+import { Stack } from '@mui/material';
 
 const Invoice = () => {
   const { paymentId } = useParams();
@@ -170,49 +171,57 @@ const Invoice = () => {
         <Divider sx={{ my: 4 }} />
 
         {/* Merchant and Payment Details */}
-        <Grid container spacing={4} sx={{ mb: 5 }}>
-            {/* Merchant Details - Left Side */}
-            <Grid item xs={6} md={6}  sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <Box sx={{ 
+        <Box 
+            sx={{ 
+                display: 'flex',
+                justifyContent: 'space-between',
+                mb: 5,
+                gap: 4  // This creates spacing between the boxes
+            }}
+            >
+            {/* Left Side - Merchant Details */}
+            <Box 
+                sx={{ 
                 bgcolor: 'grey.50',
                 p: 3,
                 borderRadius: 2,
-                height: '100%'
-                }}>
+                flex: 1  // Takes up equal space
+                }}
+            >
                 <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-                    From
+                From
                 </Typography>
                 <Typography variant="body1" sx={{ fontSize: '1.1rem', mb: 1 }}>
-                    {invoice.merchantName}
+                {invoice.merchantName}
                 </Typography>
                 <Typography color="text.secondary">
-                    Merchant ID: {invoice.merchantId}
+                Merchant ID: {invoice.merchantId}
                 </Typography>
-                </Box>
-            </Grid>
+            </Box>
 
-            {/* Payment Details - Right Side */}
-            <Grid item xs={6} md={6} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Box sx={{ 
+            {/* Right Side - Payment Details */}
+            <Box 
+                sx={{ 
                 bgcolor: 'grey.50',
                 p: 3,
                 borderRadius: 2,
-                width: '100%'
-                }}>
-                <Box sx={{ textAlign: 'right' }}>
-                    <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-                    Payment Details
-                    </Typography>
-                    <Typography variant="body1" sx={{ fontSize: '1.1rem', mb: 1 }}>
-                    Date: {format(new Date(invoice.date), 'PPP')}
-                    </Typography>
-                    <Typography color="text.secondary">
-                    Transaction ID: {invoice.transactionId}
-                    </Typography>
-                </Box>
-                </Box>
-            </Grid>
-            </Grid>
+                flex: 1,  // Takes up equal space
+                textAlign: 'right'  // Aligns all text to the right
+                }}
+            >
+                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+                Payment Details
+                </Typography>
+                <Typography variant="body1" sx={{ fontSize: '1.1rem', mb: 1 }}>
+                Date: {format(new Date(invoice.date), 'PPP')}
+                </Typography>
+                <Typography color="text.secondary">
+                Transaction ID: {invoice.transactionId}
+                </Typography>
+            </Box>
+        </Box>
+
+        
         {/* Payment Summary */}
         <TableContainer 
           sx={{ 
