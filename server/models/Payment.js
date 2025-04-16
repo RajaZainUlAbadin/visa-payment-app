@@ -1,16 +1,40 @@
+// server/models/Payment.js
+
 const mongoose = require('mongoose');
 
 const paymentSchema = new mongoose.Schema({
   merchantCard: {
-    cardNumber: String,
-    expiryDate: String,
-    cardholderName: String
+    cardNumber: {
+      type: String,
+      required: true
+    },
+    expiryDate: {
+      type: String,
+      required: true
+    },
+    cardholderName: {
+      type: String,
+      required: true
+    }
   },
-  amount: Number,
-  currency: String,
+  amount: {
+    type: Number,
+    required: true
+  },
+  currency: {
+    type: String,
+    default: 'USD'
+  },
+  status: {
+    type: String,
+    enum: ['PENDING', 'COMPLETED', 'FAILED'],
+    default: 'PENDING'
+  },
   paymentLink: String,
-  status: String,
-  createdAt: Date,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
   paidAt: Date
 });
 
