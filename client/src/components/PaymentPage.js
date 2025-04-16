@@ -146,33 +146,133 @@ const PaymentPage = () => {
             color: 'white'
           }}
         >
-          <CardContent sx={{ p: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <StoreIcon sx={{ fontSize: 40, mr: 2 }} />
-              <Typography variant="h4">
-                Payment Summary
-              </Typography>
+      <CardContent sx={{ p: 4 }}>
+            {/* Header */}
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'flex-start',
+                mb: 4
+            }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <StoreIcon sx={{ fontSize: 40, mr: 2 }} />
+                <Box>
+                    <Typography variant="h4" gutterBottom>
+                    Payment Summary
+                    </Typography>
+                    <Typography variant="body2" color="rgba(255,255,255,0.7)">
+                    Transaction #{paymentId?.slice(-8).toUpperCase()}
+                    </Typography>
+                </Box>
+                </Box>
+                <Box sx={{ 
+                bgcolor: 'rgba(255,255,255,0.1)', 
+                px: 2, 
+                py: 1, 
+                borderRadius: 2
+                }}>
+                <Typography variant="body2" color="rgba(255,255,255,0.7)">
+                    Date
+                </Typography>
+                <Typography variant="body1">
+                    {new Date().toLocaleDateString()}
+                </Typography>
+                </Box>
             </Box>
-            <Divider sx={{ my: 3, bgcolor: 'rgba(255,255,255,0.2)' }} />
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={6}>
-                <Typography color="rgba(255,255,255,0.7)" gutterBottom>
-                  Merchant
+
+            {/* Amount and Merchant Details */}
+            <Box sx={{ 
+    bgcolor: 'rgba(255,255,255,0.1)', 
+    borderRadius: 3,
+    p: 3,
+    mb: 3
+}}>
+    <Grid container spacing={3} alignItems="center" justifyContent="space-between">
+        {/* Merchant Details - Left Side */}
+        <Grid item xs={6}>
+            <Typography color="rgba(255,255,255,0.7)" gutterBottom>
+                Paying to
+            </Typography>
+            <Typography variant="h6" sx={{ 
+                display: 'flex', 
+                alignItems: 'center',
+                gap: 1
+            }}>
+                <StoreIcon sx={{ fontSize: 24 }} />
+                {paymentDetails?.merchantName}
+            </Typography>
+        </Grid>
+
+        {/* Amount Details - Right Side */}
+        <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box>
+                <Typography 
+                    color="rgba(255,255,255,0.7)" 
+                    gutterBottom 
+                    sx={{ textAlign: 'right' }}
+                >
+                    Amount to Pay
                 </Typography>
-                <Typography variant="h6">
-                  {paymentDetails?.merchantName}
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    justifyContent: 'flex-end'
+                }}>
+                    <Typography 
+                        component="span"
+                        variant="h6" 
+                        sx={{ 
+                            color: 'rgba(255,255,255,0.7)',
+                            mr: 1
+                        }}
+                    >
+                        {paymentDetails?.currency}
+                    </Typography>
+                    <Typography 
+                        component="span"
+                        variant="h5" 
+                        sx={{ 
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        {paymentDetails?.amount?.toFixed(2) || '0.00'}
+                    </Typography>
+                </Box>
+            </Box>
+        </Grid>
+    </Grid>
+</Box>
+            {/* Payment Status */}
+            <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 2,
+                bgcolor: 'rgba(255,255,255,0.1)',
+                borderRadius: 2,
+                p: 2
+            }}>
+                <Box sx={{ 
+                width: 10, 
+                height: 10, 
+                borderRadius: '50%', 
+                bgcolor: 'success.main',
+                animation: 'pulse 2s infinite'
+                }} />
+                <Typography variant="body2" color="rgba(255,255,255,0.9)">
+                Secure Payment Gateway
                 </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-                <Typography color="rgba(255,255,255,0.7)" gutterBottom>
-                  Amount to Pay
-                </Typography>
-                <Typography variant="h4">
-                  {paymentDetails?.currency} {paymentDetails?.amount.toFixed(2)}
-                </Typography>
-              </Grid>
-            </Grid>
-          </CardContent>
+            </Box>
+
+            <style>
+                {`
+                @keyframes pulse {
+                    0% { opacity: 0.5; }
+                    50% { opacity: 1; }
+                    100% { opacity: 0.5; }
+                }
+                `}
+            </style>
+            </CardContent>
         </Card>
       </Fade>
 
