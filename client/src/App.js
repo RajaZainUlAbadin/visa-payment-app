@@ -52,9 +52,6 @@ function App() {
                 path="/" 
                 element={
                   <>
-                    <Typography variant="h4" gutterBottom>
-                      Generate Payment Link
-                    </Typography>
                     <PaymentForm />
                   </>
                 } 
