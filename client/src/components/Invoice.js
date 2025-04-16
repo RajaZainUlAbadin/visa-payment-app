@@ -95,111 +95,212 @@ const Invoice = () => {
   }
 
   return (
-    <Paper sx={{ p: 4, mb: 4 }} className="invoice-container">
-      {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Grid container justifyContent="space-between" alignItems="center">
-          <Grid item>
-            <Typography variant="h4" gutterBottom>
-              INVOICE
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              #{invoice.invoiceNumber}
-            </Typography>
+    <Box sx={{ maxWidth: 1000, mx: 'auto', p: { xs: 2, md: 4 } }}>
+      <Paper 
+        elevation={3}
+        sx={{ 
+          p: { xs: 2, md: 5 },
+          borderRadius: 3,
+          background: 'linear-gradient(to bottom, #ffffff, #f8f9fa)'
+        }} 
+        className="invoice-container"
+      >
+        {/* Header */}
+        <Box sx={{ mb: 5 }}>
+          <Grid container justifyContent="space-between" alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box 
+                  sx={{ 
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    p: 2,
+                    borderRadius: 2,
+                    display: 'inline-block'
+                  }}
+                >
+                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                    INV
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    Invoice
+                  </Typography>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    #{invoice.invoiceNumber}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6} sx={{ mt: { xs: 2, md: 0 }, textAlign: 'right' }}>
+              <Box className="no-print" sx={{ display: 'flex', gap: 2, justifyContent: { xs: 'center', md: 'flex-end' } }}>
+                <Button
+                  variant="outlined"
+                  startIcon={<PrintIcon />}
+                  onClick={handlePrint}
+                  sx={{ 
+                    borderRadius: 2,
+                    px: 3,
+                    py: 1,
+                    borderWidth: 2,
+                    '&:hover': { borderWidth: 2 }
+                  }}
+                >
+                  Print
+                </Button>
+                <Button
+                  variant="contained"
+                  startIcon={<DownloadIcon />}
+                  onClick={handleDownload}
+                  sx={{ 
+                    borderRadius: 2,
+                    px: 3,
+                    py: 1,
+                    boxShadow: 2
+                  }}
+                >
+                  Download PDF
+                </Button>
+              </Box>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Box className="no-print" sx={{ display: 'flex', gap: 2 }}>
-              <Button
-                variant="outlined"
-                startIcon={<PrintIcon />}
-                onClick={handlePrint}
-              >
-                Print
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<DownloadIcon />}
-                onClick={handleDownload}
-              >
-                Download
-              </Button>
+        </Box>
+
+        <Divider sx={{ my: 4 }} />
+
+        {/* Merchant and Payment Details */}
+        <Grid container spacing={4} sx={{ mb: 5 }}>
+          <Grid item xs={12} md={6}>
+            <Box sx={{ 
+              bgcolor: 'grey.50',
+              p: 3,
+              borderRadius: 2,
+              height: '100%'
+            }}>
+              <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+                From
+              </Typography>
+              <Typography variant="body1" sx={{ fontSize: '1.1rem', mb: 1 }}>
+                {invoice.merchantName}
+              </Typography>
+              <Typography color="text.secondary">
+                Merchant ID: {invoice.merchantId}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Box sx={{ 
+              bgcolor: 'grey.50',
+              p: 3,
+              borderRadius: 2,
+              height: '100%',
+              textAlign: 'right'
+            }}>
+              <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+                Payment Details
+              </Typography>
+              <Typography variant="body1" sx={{ fontSize: '1.1rem', mb: 1 }}>
+                Date: {format(new Date(invoice.date), 'PPP')}
+              </Typography>
+              <Typography color="text.secondary">
+                Transaction ID: {invoice.transactionId}
+              </Typography>
             </Box>
           </Grid>
         </Grid>
-      </Box>
 
-      <Divider sx={{ my: 3 }} />
-
-      {/* Merchant and Payment Details */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={6}>
-          <Typography variant="h6" gutterBottom>
-            From
-          </Typography>
-          <Typography>{invoice.merchantName}</Typography>
-          <Typography color="text.secondary">Merchant ID: {invoice.merchantId}</Typography>
-        </Grid>
-        <Grid item xs={6} sx={{ textAlign: 'right' }}>
-          <Typography variant="h6" gutterBottom>
-            Payment Details
-          </Typography>
-          <Typography>Date: {format(new Date(invoice.date), 'PPP')}</Typography>
-          <Typography>Transaction ID: {invoice.transactionId}</Typography>
-        </Grid>
-      </Grid>
-
-      {/* Payment Summary */}
-      <TableContainer sx={{ mb: 4 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Description</TableCell>
-              <TableCell align="right">Amount</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {invoice.items.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell>{item.description}</TableCell>
-                <TableCell align="right">
-                  {invoice.currency} {item.amount.toFixed(2)}
+        {/* Payment Summary */}
+        <TableContainer 
+          sx={{ 
+            mb: 5,
+            borderRadius: 2,
+            boxShadow: '0 0 20px rgba(0,0,0,0.05)',
+            overflow: 'hidden'
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow sx={{ bgcolor: 'grey.50' }}>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
+                  Description
+                </TableCell>
+                <TableCell align="right" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
+                  Amount
                 </TableCell>
               </TableRow>
-            ))}
-            <TableRow>
-              <TableCell sx={{ border: 'none' }} />
-              <TableCell sx={{ border: 'none' }} />
-            </TableRow>
-            <TableRow>
-              <TableCell><strong>Total</strong></TableCell>
-              <TableCell align="right">
-                <strong>{invoice.currency} {invoice.total.toFixed(2)}</strong>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {invoice.items.map((item, index) => (
+                <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell>{item.description}</TableCell>
+                  <TableCell align="right">
+                    {formatCurrency(item.amount, invoice.currency)}
+                  </TableCell>
+                </TableRow>
+              ))}
+              <TableRow>
+                <TableCell colSpan={2} sx={{ border: 'none' }} />
+              </TableRow>
+              <TableRow sx={{ bgcolor: 'grey.50' }}>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
+                  Total
+                </TableCell>
+                <TableCell align="right" sx={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+                  {formatCurrency(invoice.total, invoice.currency)}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      {/* Payment Status */}
-      <Box sx={{ 
-        bgcolor: invoice.status === 'COMPLETED' ? 'success.light' : 'warning.light',
-        p: 2,
-        borderRadius: 1,
-        mb: 4
-      }}>
-        <Typography variant="h6">
-          Payment Status: {invoice.status}
-        </Typography>
-      </Box>
+        {/* Payment Status */}
+        <Box sx={{ 
+          bgcolor: invoice.status === 'COMPLETED' ? 'success.light' : 'warning.light',
+          p: 3,
+          borderRadius: 2,
+          mb: 5,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2
+        }}>
+          <Box sx={{ 
+            width: 12, 
+            height: 12, 
+            borderRadius: '50%',
+            bgcolor: invoice.status === 'COMPLETED' ? 'success.main' : 'warning.main',
+            animation: 'pulse 2s infinite'
+          }} />
+          <Typography variant="h6" sx={{ color: invoice.status === 'COMPLETED' ? 'success.dark' : 'warning.dark' }}>
+            Payment Status: {invoice.status}
+          </Typography>
+        </Box>
 
-      {/* Footer */}
-      <Divider sx={{ my: 3 }} />
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography variant="body2" color="text.secondary">
-          This is a computer-generated invoice. No signature is required.
-        </Typography>
-      </Box>
-    </Paper>
+        {/* Footer */}
+        <Divider sx={{ my: 4 }} />
+        <Box sx={{ 
+          textAlign: 'center',
+          bgcolor: 'grey.50',
+          p: 3,
+          borderRadius: 2
+        }}>
+          <Typography variant="body2" color="text.secondary">
+            This is a computer-generated invoice. No signature is required.
+          </Typography>
+        </Box>
+
+        {/* Add pulse animation */}
+        <style>
+          {`
+            @keyframes pulse {
+              0% { opacity: 0.6; }
+              50% { opacity: 1; }
+              100% { opacity: 0.6; }
+            }
+          `}
+        </style>
+      </Paper>
+    </Box>
   );
 };
 

@@ -20,7 +20,7 @@ body {
   .no-print {
     display: none !important;
   }
-
+  
   .invoice-container {
     padding: 20px !important;
     box-shadow: none !important;
@@ -28,5 +28,9 @@ body {
 
   body {
     background: white !important;
+  }
+
+  @page {
+    margin: 2cm;
   }
 }
