@@ -87,9 +87,10 @@ exports.processPayment = async (req, res) => {
       sourceCardLast4: customerCard.cardNumber.slice(-4),
       destCardLast4: payment.merchantCard.cardNumber.slice(-4)
     });
+    const visaDirect = new VisaDirectService();
 
     // Process Visa Direct transfer
-    const result = await VisaDirectService.pushFundsTransfer(
+    const result = await visaDirect.pushFundsTransfer(
       customerCard,
       payment.merchantCard,
       payment.amount
