@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const paymentRoutes = require('./routes/paymentRoutes');
+const visaDirectService = require('./services/visaDirectService');
+
 
 const app = express();
 

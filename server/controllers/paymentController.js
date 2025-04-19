@@ -73,40 +73,27 @@ exports.getPaymentDetails = async (req, res) => {
 
 exports.processPayment = async (req, res) => {
   try {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { paymentId, customerCard } = req.body;
-
 
     // Find the payment
     const payment = await Payment.findById(paymentId);
     if (!payment) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Payment not found' 
-      });
+      return res.status(404).json({ error: 'Payment not found' });
     }
 
-    // Validate payment status
-    if (payment.status !== 'PENDING') {
-      return res.status(400).json({
-        success: false,
-        error: 'Payment has already been processed'
-      });
-    }
+    console.log('Processing payment:', {
+      paymentId,
+      amount: payment.amount,
+      sourceCardLast4: customerCard.cardNumber.slice(-4),
+      destCardLast4: payment.merchantCard.cardNumber.slice(-4)
+    });
 
-
-    // Process payment
+    // Process Visa Direct transfer
     const result = await VisaDirectService.pushFundsTransfer(
       customerCard,
       payment.merchantCard,
       payment.amount
     );
-
 
     if (result.success) {
       payment.status = 'COMPLETED';
@@ -127,7 +114,7 @@ exports.processPayment = async (req, res) => {
       res.status(400).json({
         success: false,
         error: 'Payment processing failed',
-        details: result.error
+        details: result.details
       });
     }
 
@@ -136,7 +123,7 @@ exports.processPayment = async (req, res) => {
     res.status(500).json({ 
       success: false, 
       error: 'Payment processing failed',
-      details: error.message 
+      details: error.message
     });
   }
 };
