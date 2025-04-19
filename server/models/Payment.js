@@ -2,21 +2,23 @@
 
 const mongoose = require('mongoose');
 
-const paymentSchema = new mongoose.Schema({
-  merchantCard: {
-    cardNumber: {
-      type: String,
-      required: true
-    },
-    expiryDate: {
-      type: String,
-      required: true
-    },
-    cardholderName: {
-      type: String,
-      required: true
-    }
+const cardSchema = new mongoose.Schema({
+  cardNumber: {
+    type: String,
+    required: true
   },
+  expiryDate: {
+    type: String,
+    required: true
+  },
+  cardholderName: {
+    type: String,
+    required: true
+  }
+});
+
+const paymentSchema = new mongoose.Schema({
+  merchantCard: cardSchema,
   amount: {
     type: Number,
     required: true
@@ -27,15 +29,16 @@ const paymentSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['PENDING', 'COMPLETED', 'FAILED'],
+    enum: ['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED'],
     default: 'PENDING'
   },
   paymentLink: String,
+  transactionId: String,
   createdAt: {
     type: Date,
     default: Date.now
   },
-  paidAt: Date
+  completedAt: Date
 });
 
 module.exports = mongoose.model('Payment', paymentSchema);

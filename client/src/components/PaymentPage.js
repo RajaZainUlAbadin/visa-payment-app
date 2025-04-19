@@ -77,10 +77,28 @@ const PaymentPage = () => {
     setError(null);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/payments/process', {
-        paymentId,
-        customerCard
-      });
+
+      const paymentData = {
+        paymentId: paymentId, // Make sure this is a string
+        customerCard: {
+          cardNumber: customerCard.cardNumber.replace(/\s/g, ''),
+          expiryDate: customerCard.expiryDate,
+          cardholderName: customerCard.cardholderName,
+          cvv: customerCard.cvv
+        }
+      };
+
+      console.log('Sending payment data:', paymentData); // For debugging
+
+      const response = await axios.post(
+        'http://localhost:5000/api/payments/process',
+        paymentData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
       if (response.data.success) {
         navigate(`/invoice/${paymentId}`);
