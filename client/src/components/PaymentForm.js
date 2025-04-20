@@ -73,7 +73,7 @@ const PaymentForm = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://161.35.38.181.nip.io:5000/api/payments/create-link', formData);
+      const response = await axios.post('https://161.35.38.181.nip.io/api/payments/create-link', formData);
       setPaymentLink(response.data);
       setSnackbar({ open: true, message: 'Payment link generated successfully!' });
     } catch (error) {
