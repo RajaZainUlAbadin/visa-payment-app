@@ -30,7 +30,7 @@ import axios from 'axios';
 const PaymentForm = () => {
   const [formData, setFormData] = useState({
     merchantCard: {
-      cardNumber: '4098872852544805',
+      cardNumber: '',
       expiryDate: '',
       cardholderName: ''
     },

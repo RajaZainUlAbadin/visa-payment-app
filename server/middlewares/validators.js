@@ -3,9 +3,6 @@
 const { body } = require('express-validator');
 
 exports.validatePaymentLink = [
-  body('merchantCard.cardNumber')
-    .matches(/^(4957030420210454|4957030420210462|4895142232120006|4098872852544805)$/)
-    .withMessage('Please use a valid test card number'),
   
   body('merchantCard.expiryDate')
     .matches(/^(0[1-9]|1[0-2])\/([0-9]{2})$/)
