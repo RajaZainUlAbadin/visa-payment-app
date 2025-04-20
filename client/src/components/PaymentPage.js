@@ -50,7 +50,7 @@ const PaymentPage = () => {
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/payments/${paymentId}`);
+        const response = await axios.get(`https://161.35.38.181.nip.io/api/payments/${paymentId}`);
         setPaymentDetails(response.data);
         setLoading(false);
       } catch (error) {
@@ -91,7 +91,7 @@ const PaymentPage = () => {
       console.log('Sending payment data:', paymentData); // For debugging
 
       const response = await axios.post(
-        'http://localhost:5000/api/payments/process',
+        'https://161.35.38.181.nip.io/api/payments/process',
         paymentData,
         {
           headers: {
