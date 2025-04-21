@@ -35,7 +35,7 @@ const Invoice = () => {
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
-        const response = await axios.get(`https://161.35.38.181.nip.io/api/payments/invoice/${paymentId}`);
+        const response = await axios.get(`https://jumarisllc.com/api/payments/invoice/${paymentId}`);
         setInvoice(response.data);
         setLoading(false);
       } catch (error) {
