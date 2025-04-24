@@ -32,14 +32,18 @@ class VisaDirectService {
             const correlationId = Date.now().toString();
             const basicAuth = Buffer.from(`${this.userId}:${this.password}`).toString('base64');
             
-            // Generate unique numbers for transaction
+            // Generate properly formatted reference numbers
             const systemsTraceAuditNumber = correlationId.slice(-6);
-            const retrievalReferenceNumber = `${systemsTraceAuditNumber}${new Date().getDate().toString().padStart(2, '0')}`;
+            // Format retrievalReferenceNumber to match required pattern (12 digits)
+            const retrievalReferenceNumber = `${systemsTraceAuditNumber}${new Date().getTime().toString().slice(-6)}`;
+
+             // Generate unique idCode following the pattern "VMT" + 11 digits
+            const uniqueIdCode = `VMT${new Date().getTime().toString().slice(-11)}`;
             
             const payload = {
                 "acquiringBin": this.acquiringBIN,
                 "acquirerCountryCode": 840,
-                "businessApplicationId": "FT",
+                "businessApplicationId": "FD",
                 "localTransactionDateTime": new Date().toISOString().split('.')[0],
                 "merchantCategoryCode": 6012,
                 "request": [
@@ -48,7 +52,7 @@ class VisaDirectService {
                         "cardAcceptor": {
                             "name": sourceCard.cardholderName || "Merchant Name",
                             "terminalId": systemsTraceAuditNumber, // Use dynamic terminal ID
-                            "idCode": retrievalReferenceNumber.slice(0, 4),
+                            "idCode": uniqueIdCode,
                             "address": {
                                 "city": sourceCard.city || "San Francisco",
                                 "state": sourceCard.state || "CA",
