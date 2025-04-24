@@ -50,7 +50,7 @@ const PaymentPage = () => {
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
-        const response = await axios.get(`https://jumarisllc.com/api/payments/${paymentId}`);
+        const response = await axios.get(`http://localhost:5000/api/payments/${paymentId}`);
         setPaymentDetails(response.data);
         setLoading(false);
       } catch (error) {
@@ -88,10 +88,8 @@ const PaymentPage = () => {
         }
       };
 
-      console.log('Sending payment data:', paymentData); // For debugging
-
       const response = await axios.post(
-        'https://jumarisllc.com/api/payments/process',
+        'http://localhost:5000/api/payments/process',
         paymentData,
         {
           headers: {

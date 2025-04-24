@@ -1,7 +1,6 @@
 // server/controllers/paymentController.js
 
 const Payment = require('../models/Payment');
-const visaService = require('../services/visaService');
 const { generateInvoice } = require('../utils/invoiceGenerator');
 
 const { validationResult } = require('express-validator');
@@ -73,93 +72,101 @@ exports.getPaymentDetails = async (req, res) => {
 
 exports.processPayment = async (req, res) => {
   try {
-    const { paymentId, customerCard } = req.body;
+      const { paymentId, customerCard } = req.body;
 
-    // Find the payment
-    const payment = await Payment.findById(paymentId);
-    if (!payment) {
-      return res.status(404).json({ error: 'Payment not found' });
-    }
+      const payment = await Payment.findById(paymentId);
+      if (!payment) {
+          return res.status(404).json({ error: 'Payment not found' });
+      }
 
-    console.log('Processing payment:', {
-      paymentId,
-      amount: payment.amount,
-      sourceCardLast4: customerCard.cardNumber.slice(-4),
-      destCardLast4: payment.merchantCard.cardNumber.slice(-4)
-    });
-    const visaDirect = new VisaDirectService();
+      const visaDirect = new VisaDirectService();
 
-    // Process Visa Direct transfer
-    const result = await visaDirect.pushFundsTransfer(
-      customerCard,
-      payment.merchantCard,
-      payment.amount
-    );
-
-    if (result.success) {
-      payment.status = 'COMPLETED';
-      payment.transactionId = result.transactionId;
-      payment.completedAt = new Date();
+      payment.status = 'PROCESSING';
       await payment.save();
 
-      res.json({
-        success: true,
-        status: 'COMPLETED',
-        transactionId: result.transactionId
-      });
-    } else {
-      payment.status = 'FAILED';
-      payment.errorMessage = result.error;
-      await payment.save();
+      const result = await visaDirect.pushFundsTransfer(
+          customerCard,
+          payment.merchantCard,
+          payment.amount,
+          5,  // maxRetries
+          3000 // delay in ms
+      );
 
-      res.status(400).json({
-        success: false,
-        error: 'Payment processing failed',
-        details: result.details
-      });
-    }
+      if (result.success) {
+          payment.status = 'COMPLETED';
+          payment.transactionId = result.transactionId;
+          payment.completedAt = new Date();
+          await payment.save();
+
+          res.json({
+              success: true,
+              status: 'COMPLETED',
+              transactionId: result.transactionId,
+              details: result.responseData
+          });
+      } else {
+          payment.status = 'FAILED';
+          payment.errorMessage = result.error;
+          await payment.save();
+
+          res.status(400).json({
+              success: false,
+              error: 'Payment processing failed',
+              details: result.details
+          });
+      }
 
   } catch (error) {
-    console.error('Payment processing error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Payment processing failed',
-      details: error.message
-    });
+      console.error('Payment processing error:', error);
+      
+      // Update payment status to FAILED if payment exists
+      if (payment) {
+          payment.status = 'FAILED';
+          payment.errorMessage = error.message;
+          await payment.save();
+      }
+
+      res.status(500).json({ 
+          success: false, 
+          error: 'Payment processing failed',
+          details: error.message
+      });
   }
 };
   
 exports.getInvoice = async (req, res) => {
-    try {
-      const payment = await Payment.findById(req.params.paymentId);
-      
-      if (!payment) {
-        return res.status(404).json({ error: 'Payment not found' });
-      }
-  
-      if (payment.status !== 'COMPLETED') {
-        return res.status(400).json({ error: 'Payment not completed' });
-      }
-  
-      const invoice = {
-        invoiceNumber: `INV-${payment._id.toString().slice(-6)}`,
-        date: payment.paidAt,
-        merchantName: payment.merchantCard.cardholderName,
-        amount: payment.amount,
-        currency: payment.currency,
-        status: payment.status,
-        items: [{
-          description: 'Payment Transfer',
-          amount: payment.amount
-        }],
-        total: payment.amount
-      };
-  
-      res.json(invoice);
-    } catch (error) {
-      console.error('Get invoice error:', error);
-      res.status(500).json({ error: 'Failed to get invoice' });
+  try {
+    const payment = await Payment.findById(req.params.paymentId);
+    
+    if (!payment) {
+      return res.status(404).json({ error: 'Payment not found' });
     }
+
+    if (payment.status !== 'COMPLETED') {
+      return res.status(400).json({ error: 'Payment not completed' });
+    }
+
+    const invoice = {
+      invoiceNumber: `INV-${payment._id.toString().slice(-6)}`,
+      date: payment.completedAt,
+      merchantName: payment.merchantCard.cardholderName,
+      merchantId: payment.merchantCard.cardNumber.slice(-4),
+      amount: payment.amount,
+      currency: payment.currency,
+      status: payment.status,
+      transactionId: payment.transactionId,
+      items: [{
+        description: 'Payment Transfer',
+        amount: payment.amount
+      }],
+      total: payment.amount
+    };
+
+    res.json(invoice);
+  } catch (error) {
+    console.error('Get invoice error:', error);
+    res.status(500).json({ error: 'Failed to get invoice' });
+  }
 };
 
 exports.getPaymentStatus = async (req, res) => {
