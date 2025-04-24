@@ -270,21 +270,6 @@ const PaymentForm = () => {
             </Card>
           </Box>
         )}
-
-        <Box sx={{ mt: 3 }}>
-          <Alert 
-            severity="info"
-            sx={{ 
-              borderRadius: 2,
-              '& .MuiAlert-icon': {
-                fontSize: '1.5rem'
-              }
-            }}
-          >
-            For testing, use any of the test card numbers shown above.
-            Use any future date for expiry date (format: MM/YY).
-          </Alert>
-        </Box>
       </Paper>
 
       <Snackbar

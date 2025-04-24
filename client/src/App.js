@@ -1,7 +1,7 @@
 // client/src/App.js
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route  } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { 
   CssBaseline, 
@@ -40,9 +40,20 @@ function App() {
         <div className="App">
           <AppBar position="static" color="primary">
             <Toolbar>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Typography 
+                variant="h6" 
+                component="div" 
+                sx={{ 
+                    flexGrow: 1,
+                    cursor: 'pointer', // Makes it look clickable
+                    '&:hover': {
+                        opacity: 0.8  // Optional: adds hover effect
+                    }
+                }}
+                onClick={() => window.location.href="/"} // Adds navigation to home
+            >
                 Push Pay
-              </Typography>
+            </Typography>
             </Toolbar>
           </AppBar>
 
