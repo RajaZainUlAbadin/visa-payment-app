@@ -160,7 +160,7 @@ class VisaDirectService {
         }
     }
 
-    async fetchTransactionStatusWithRetry(statusIdentifier, retries = 20, delay = 3000) {
+    async fetchTransactionStatusWithRetry(statusIdentifier, retries = 50, delay = 3000) {
         for (let attempt = 1; attempt <= retries; attempt++) {
             const result = await this.checkTransactionStatus(statusIdentifier);
             
