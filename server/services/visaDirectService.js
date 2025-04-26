@@ -92,7 +92,8 @@ class VisaDirectService {
                     'x-client-transaction-id': `txn-${correlationId}`
                 },
                 data: payload,
-                httpsAgent: this.httpsAgent
+                httpsAgent: this.httpsAgent,
+                timeout: 600000,
             });
 
             // Get the transaction identifier from the initial response
@@ -142,7 +143,8 @@ class VisaDirectService {
                     'Authorization': `Basic ${basicAuth}`,
                     'x-client-transaction-id': `query-${Date.now()}`
                 },
-                httpsAgent: this.httpsAgent
+                httpsAgent: this.httpsAgent,
+                timeout: 600000,
             });
 
             return {
