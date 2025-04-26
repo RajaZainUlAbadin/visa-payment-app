@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const paymentRoutes = require('./routes/paymentRoutes');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -23,6 +24,8 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // Routes
 app.use('/api/payments', paymentRoutes);
+// Routes
+app.use('/api/auth', authRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
