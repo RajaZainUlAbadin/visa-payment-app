@@ -9,6 +9,7 @@ import {
   Container, 
   Paper 
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../App';
 
 const Login = () => {
@@ -17,6 +18,7 @@ const Login = () => {
   const [error, setError] = useState('');
   
   const auth = useAuthContext();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,7 +36,8 @@ const Login = () => {
       // Use the login method from auth context
       auth.login(user, token);
 
-      // Redirect will be handled by the Route component
+      // Navigate to home page
+      navigate('/');
     } catch (error) {
       setError('Login failed. Please check your credentials.');
       console.error('Login error', error);

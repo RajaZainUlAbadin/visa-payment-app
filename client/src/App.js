@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { 
   BrowserRouter as Router, 
   Routes, 
   Route, 
   Navigate, 
   Outlet,
-  useNavigate
+  useNavigate 
 } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { 
@@ -39,78 +39,54 @@ const theme = createTheme({
   },
 });
 
-// Authentication Context (you can expand this)
-const AuthContext = React.createContext(null);
+// Authentication Context
+const AuthContext = React.createContext({
+  isAuthenticated: false,
+  login: () => {},
+  logout: () => {}
+});
 
-// Protected Route Component
-const ProtectedRoute = () => {
-  const auth = useAuth();
-  
-  return auth.isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
-};
-
-// Authentication Hook
-const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    // Check for token in localStorage
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    
-    if (token && storedUser) {
-      setIsAuthenticated(true);
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  const login = (userData, token) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setIsAuthenticated(true);
-    setUser(userData);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setIsAuthenticated(false);
-    setUser(null);
-  };
-
-  return { 
-    isAuthenticated, 
-    user, 
-    login, 
-    logout 
-  };
-};
-
-// Create a separate Logout component
+// Logout Component
 const Logout = () => {
   const navigate = useNavigate();
-  const auth = useAuthContext();
+  const { logout } = useContext(AuthContext);
 
-  useEffect(() => {
-    auth.logout();
+  React.useEffect(() => {
+    logout();
     navigate('/login');
-  }, []);
+  }, [logout, navigate]);
 
   return null;
 };
 
+// Protected Route Component
+const ProtectedRoute = () => {
+  const { isAuthenticated } = useContext(AuthContext);
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+};
+
 function App() {
-  const auth = useAuth();
-  const handleLogout = () => {
-    auth.logout();
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState(() => 
+    !!localStorage.getItem('token')
+  );
+
+  const login = useCallback((userData, token) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
+    setIsAuthenticated(true);
+  }, []);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsAuthenticated(false);
+  }, []);
 
   return (
-    <AuthContext.Provider value={auth}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
         <Router>
+          <CssBaseline />
           <div className="App">
             <AppBar position="static" color="primary">
               <Toolbar>
@@ -128,7 +104,7 @@ function App() {
                 >
                   Push Pay
                 </Typography>
-                {auth.isAuthenticated && (
+                {isAuthenticated && (
                   <Button color="inherit" href="/logout">
                     Logout
                   </Button>
@@ -138,21 +114,27 @@ function App() {
 
             <Container maxWidth="md" sx={{ my: 4 }}>
               <Routes>
+                {/* Logout Route */}
+                <Route path="/logout" element={<Logout />} />
+
                 {/* Public Routes */}
-                <Route path="/login" element={
-                  auth.isAuthenticated ? <Navigate to="/" replace /> : <Login />
-                } />
+                <Route 
+                  path="/login" 
+                  element={
+                    isAuthenticated ? <Navigate to="/" replace /> : <Login />
+                  } 
+                />
 
                 <Route 
-                    path="/pay/:paymentId" 
-                    element={
-                      <>
-                        <Typography variant="h4" gutterBottom>
-                          Make Payment
-                        </Typography>
-                        <PaymentPage />
-                      </>
-                    } 
+                  path="/pay/:paymentId" 
+                  element={
+                    <>
+                      <Typography variant="h4" gutterBottom>
+                        Make Payment
+                      </Typography>
+                      <PaymentPage />
+                    </>
+                  } 
                 />
 
                 <Route 
@@ -167,20 +149,12 @@ function App() {
                   } 
                 />
 
-                <Route path="/logout" element={<Logout />} />
-
                 {/* Protected Routes */}
                 <Route element={<ProtectedRoute />}>
                   <Route 
                     path="/" 
-                    element={
-                      <>
-                        <PaymentForm />
-                      </>
-                    } 
+                    element={<PaymentForm />} 
                   />
-
-                  
                 </Route>
 
                 {/* 404 Route */}
@@ -207,7 +181,11 @@ function App() {
 
 // Custom hook to use auth context
 export const useAuthContext = () => {
-  return React.useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuthContext must be used within an AuthProvider');
+  }
+  return context;
 };
 
 export default App;
